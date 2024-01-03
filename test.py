@@ -1,1 +1,1 @@
-print(float("inf"))
+print(not 1)

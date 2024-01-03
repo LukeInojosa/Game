@@ -1,6 +1,5 @@
 import pygame as pg
 import math
-import random
 UP = 0
 RIGTH = 1
 DOWN = 2
@@ -18,7 +17,8 @@ class Labirynth:
         #players
         self.players = []
         #labyrinth characteristics
-        self.len_lab = len(lab)
+        self.rowns_lab = len(lab)
+        self.columns_lab = len(lab[0])
         self.start = start
         self.end = end
         self.lab = lab
@@ -26,13 +26,21 @@ class Labirynth:
         self.width_screen, self.height_screen = screen.get_size()
         self.screen = screen
         #blocks lengths
-        self.width_rect, self.height_rect = self.width_screen//self.len_lab , self.height_screen//self.len_lab
+        self.width_rect, self.height_rect = self.width_screen//self.columns_lab , self.height_screen//self.rowns_lab
 
     def draw_labyrinth(self):
-        self.screen.fill('black')
-        for i in range(self.len_lab):
-            for j in range(self.len_lab):
-                pg.draw.rect(self.screen,"white",pg.Rect(self.width_rect*j,self.height_rect*i,self.width_rect*self.lab[i][j],self.height_rect*self.lab[i][j]),0)
+        image = pg.image.load("/home/lucasinojosa/Documentos/UFPE/Projetos/Game/block.png")
+        image = image = pg.transform.scale(image,(self.width_rect,self.height_rect))
+        for i in range(self.rowns_lab):
+            for j in range(self.columns_lab):
+                pos = (self.width_rect*j,self.height_rect*i)
+                #Drawn blocks
+                self.screen.blit(image,pos)
+                #Draw spaces
+                size = (self.width_rect*self.lab[i][j],self.height_rect*self.lab[i][j])
+                rgb = abs(math.floor((self.fitness(pos)/self.fitness(self.start,True))*200)-255)
+                color = (rgb,rgb,rgb)
+                pg.draw.rect(self.screen,color,pg.Rect(pos[0],pos[1],size[0],size[1]),0)
         i,j = self.end
         pg.draw.rect(self.screen,"green",pg.Rect(self.width_rect*j,self.height_rect*i,self.width_rect*self.lab[i][j],self.height_rect*self.lab[i][j]),0)
 
@@ -83,7 +91,7 @@ class Labirynth:
     def is_free_index(self,position):
         i, j = position
         between = lambda x,y,z: (y >= x and y < z)
-        return True if (between(0,i,self.len_lab) and between(0,j,self.len_lab) and self.lab[i][j] == 1) else False
+        return True if (between(0,i,self.rowns_lab) and between(0,j,self.columns_lab) and self.lab[i][j] == 1) else False
     
     def end_game(self,position):
         i,j = self.to_index(position)
@@ -122,6 +130,12 @@ class Labirynth:
             return RIGTH
     def clear_players(self):
         self.players.clear()
+    def fitness(self,reach,convert_to_coordinated = False):
+        target = self.to_cordinated(self.end)
+        r = reach
+        if convert_to_coordinated:
+            r = self.to_cordinated(reach)
+        return (target[0] - r[0])**2 + (target[1] - r[1])**2
 
 
 def create_labyrinth(N,start,end):

@@ -36,8 +36,7 @@ NO_MOVE = -1
 move = NO_MOVE
 
 #genetic algorithm
-len_gene = 300
-genetic = gen.Genetic(100,0.5,(final[1]*labirinty.width_rect,final[0]*labirinty.height_rect),len_gene,labirinty)
+genetic = gen.Genetic(100,0.5,(final[1]*labirinty.width_rect,final[0]*labirinty.height_rect),labirinty)
 genetic.initialize_population()
 utility.start_all_players(labirinty,len(genetic.population))
 k = 0
@@ -57,7 +56,7 @@ while janela_aberta:
         # pos = labirinty.move_player(0,move)
         # print(genetic.fitness(pos["current_position"]))
         # labirinty.draw_player(0)
-        if k < genetic.len_gene:
+        if k < genetic.max_len:
             labirinty.draw_labyrinth()
             utility.move_all_players(labirinty,genetic.population,k)
             utility.draw_all_players(labirinty,len(genetic.population))
@@ -76,7 +75,7 @@ while janela_aberta:
             utility.start_all_players(labirinty,len(genetic.population))
             k = 0
     else:
-        if k < genetic.len_gene:
+        if k < genetic.max_len:
             labirinty.draw_labyrinth()
             labirinty.move_player(0,best["gene"][k])
             labirinty.draw_player(0)
