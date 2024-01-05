@@ -1,9 +1,9 @@
  
 import pygame as pg
-def start_all_players(lab,n):
+def start_all_players(lab,n,color):
     lab.clear_players()
     for i in range(n):
-        lab.start_new_player()
+        lab.start_new_player(color[i])
 def move_all_players(lab,positions,k):
     for i in range(len(positions)):
         gene = positions[i]["gene"]

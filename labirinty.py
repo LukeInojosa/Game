@@ -26,7 +26,8 @@ class Labirynth:
         self.width_screen, self.height_screen = screen.get_size()
         self.screen = screen
         #blocks lengths
-        self.width_rect, self.height_rect = self.width_screen//self.columns_lab , self.height_screen//self.rowns_lab
+        self.width_rect, self.height_rect = math.floor(self.width_screen/self.columns_lab) , math.floor(self.height_screen/self.rowns_lab)
+        self.screen = pg.display.set_mode((self.width_rect*self.columns_lab,self.height_rect*self.rowns_lab))
 
     def draw_labyrinth(self):
         image = pg.image.load("/home/lucasinojosa/Documentos/UFPE/Projetos/Game/block.png")
@@ -44,10 +45,11 @@ class Labirynth:
         i,j = self.end
         pg.draw.rect(self.screen,"green",pg.Rect(self.width_rect*j,self.height_rect*i,self.width_rect*self.lab[i][j],self.height_rect*self.lab[i][j]),0)
 
-    def start_new_player(self):
+    def start_new_player(self,is_child = False):
         player_initial_position = self.to_cordinated(self.start)
         player_size = (self.width_rect,self.height_rect)
-        player_color = (0,255,0)
+        if is_child: player_color = (0,255,0)
+        else: player_color = (255,0,0)
         self.players.append(Player(player_initial_position,player_size,player_color))
 
     def move_player(self,n,direction):

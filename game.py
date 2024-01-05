@@ -13,9 +13,11 @@ def get_move():
         return 1
     if event.key == pg.K_a:
         return 3
+    if event.key == pg.K_ESCAPE:
+        return 4
 #Initial configurations
 pg.init()
-size_screen = width_screen, height_screen = (900,600)
+size_screen = width_screen, height_screen = (1300,700)
 
 #initialize display
 screen = pg.display.set_mode(size_screen)
@@ -25,7 +27,13 @@ pg.display.set_caption("New game")
 clock = pg.time.Clock()
 
 start = (1,0)
-level = maze.create_maze(20,start)
+level = maze.create_maze(50,start)
+# level = [[1,1,1,1,1],
+#          [0,0,0,1,0],
+#          [1,0,1,1,1],
+#          [1,1,1,0,0],
+#          [1,0,0,0,0]
+#          ]
 end = False
 final = (len(level[0]) - 2,len(level[0]) - 1)
 
@@ -36,22 +44,25 @@ NO_MOVE = -1
 move = NO_MOVE
 
 #genetic algorithm
-genetic = gen.Genetic(100,0.5,(final[1]*labirinty.width_rect,final[0]*labirinty.height_rect),labirinty)
+genetic = gen.Genetic(50,0.5,(final[1]*labirinty.width_rect,final[0]*labirinty.height_rect),labirinty)
 genetic.initialize_population()
-utility.start_all_players(labirinty,len(genetic.population))
+utility.start_all_players(labirinty,len(genetic.population),[x["child"] for x in genetic.population])
 k = 0
 janela_aberta = True
 fps = 100000
 gen =0
 while janela_aberta:
-    move = NO_MOVE
+    #move = NO_MOVE
     for event in pg.event.get():
         if event.type == pg.QUIT:
             janela_aberta = False
         if event.type == pg.KEYDOWN:
             move = get_move()
-
-    if not end:
+    # if move == 4:
+    #     labirinty.draw_labyrinth()
+    #     for i in genetic.population:
+    #         print(i)
+    if not end and move != 4:
         # labirinty.draw_labyrinth()
         # pos = labirinty.move_player(0,move)
         # print(genetic.fitness(pos["current_position"]))
@@ -72,9 +83,9 @@ while janela_aberta:
             genetic.sel_survivers()
             print(np.mean([x["fitness"] for x in genetic.population]))
             genetic.reproduce()
-            utility.start_all_players(labirinty,len(genetic.population))
+            utility.start_all_players(labirinty,len(genetic.population),[x["child"] for x in genetic.population])
             k = 0
-    else:
+    elif move != 4:
         if k < genetic.max_len:
             labirinty.draw_labyrinth()
             labirinty.move_player(0,best["gene"][k])
