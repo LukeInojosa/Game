@@ -1,2 +1,2 @@
 # Game
-Game in Pyhthon
+genetic algorithm developed to solve labyrinth 
